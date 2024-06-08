@@ -1,0 +1,91 @@
+import tensorflow as tf
+from tensorflow.keras.applications.xception import Xception
+from tensorflow.keras.layers import GlobalAveragePooling2D, Dense, Dropout
+from tensorflow.keras.models import Model
+import os
+import cv2
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+
+def load_and_preprocess_celeb_df_v2_data(input_shape, deepfake_dir='Deep', real_dir='R'):
+    # Загрузка видео из директорий
+    X_deepfake = []
+    y_deepfake = []
+    for filename in os.listdir(deepfake_dir):
+        if filename.endswith('.mp4'):
+            video = cv2.VideoCapture(os.path.join(deepfake_dir, filename))
+            frames = []
+            while True:
+                ret, frame = video.read()
+                if not ret:
+                    break
+                frames.append(frame)
+            X_deepfake.append(np.array(frames))
+            y_deepfake.append(0)
+            video.release()
+
+    X_real = []
+    y_real = []
+    for filename in os.listdir(real_dir):
+        if filename.endswith('.mp4'):
+            video = cv2.VideoCapture(os.path.join(real_dir, filename))
+            frames = []
+            while True:
+                ret, frame = video.read()
+                if not ret:
+                    break
+                frames.append(frame)
+            X_real.append(np.array(frames))
+            y_real.append(1)
+            video.release()
+
+    # Предобработка данных
+    X_deepfake_preprocessed = np.array([cv2.resize(frame, input_shape[:2]) for video in X_deepfake for frame in video])
+    X_real_preprocessed = np.array([cv2.resize(frame, input_shape[:2]) for video in X_real for frame in video])
+    X_deepfake_preprocessed = X_deepfake_preprocessed.reshape((-1,) + input_shape)
+    X_real_preprocessed = X_real_preprocessed.reshape((-1,) + input_shape)
+
+    # Разделение на обучающую и тестовую выборки
+    X_train_deepfake, X_test_deepfake, y_train_deepfake, y_test_deepfake = train_test_split(X_deepfake_preprocessed, y_deepfake, test_size=0.2, random_state=42)
+    X_train_real, X_test_real, y_train_real, y_test_real = train_test_split(X_real_preprocessed, y_real, test_size=0.2, random_state=42)
+
+    # Объединение данных
+    X_train = np.concatenate((X_train_deepfake, X_train_real))
+    X_test = np.concatenate((X_test_deepfake, X_test_real))
+    y_train = np.concatenate((y_train_deepfake, y_train_real))
+    y_test = np.concatenate((y_test_deepfake, y_test_real))
+
+    return (X_train, y_train), (X_test, y_test)
+
+
+# Загрузка и "заморозка" предобученной модели Xception
+base_model = Xception(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
+for layer in base_model.layers:
+    layer.trainable = False
+
+# Добавление дополнительных слоев
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(128, activation='relu')(x)
+x = Dropout(0.5)(x)
+output = Dense(1, activation='sigmoid')(x)
+
+# Создание модели
+model = Model(inputs=base_model.input, outputs=output)
+
+# Компиляция модели
+model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+
+# Загрузка и подготовка данных
+(X_train, y_train), (X_test, y_test) = load_and_preprocess_celeb_df_v2_data(input_shape=(224, 224, 3))
+
+# Дообучение модели
+model.fit(X_train, y_train, epochs=10, batch_size=32, validation_data=(X_test, y_test))
+
+# Сохранение модели в формате H5 и JSON
+model.save('deepfake_detection_model.h5')
+model.save_weights('deepfake_detection_weights.h5')
+model_json = model.to_json()
+with open('app/tests/deepfake_detection_model.json', 'w') as json_file:
+    json_file.write(model_json)
