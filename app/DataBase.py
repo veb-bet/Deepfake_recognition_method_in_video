@@ -1,43 +1,46 @@
 import sqlite3
+from os.path import exists
 
 
 class DataBase:
     def __init__(self, name):
         # telling name of .db-file on init
         self.name = name
+
+        database_missing = not exists(self.name)
+        if database_missing:        # then create new
+            print("Database file is not found, creating new")
+            with sqlite3.connect(self.name) as connection:
+                cursor = connection.cursor()
+                # Passwords have fantastic informational security
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS Users (
+                        ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Nickname TEXT UNIQUE NOT NULL,
+                        Password TEXT NOT NULL,
+                        Icon BLOB
+                    );
+                ''')
+                cursor.execute('''
+                    CREATE TABLE IF NOT EXISTS Requests (
+                        Date TEXT PRIMARY KEY,
+                        Name TEXT NOT NULL,
+                        Video BLOB NOT NULL,
+                        IsFake INTEGER NOT NULL,
+                        FakeCoefficient REAL NOT NULL,
+                        UserID INTEGER,
+                        Feedback TEXT,
+                        FOREIGN KEY (UserID) REFERENCES Users (ID) ON DELETE CASCADE
+                    );
+                ''')
+                print('Database created successfully')
+
         # DataBase object holds requisites of user, who uses this database at the moment.
         # basically, this class could be named "Account" if it needed for anything else, but communicating with DB.
         self.id = None
         self.nickname = None
         self.password = None
         self.icon = None
-
-    # if file doesn't exist yet, this function should be activated.
-    # run this file `python DataBase.py` to create database file.
-    def create_new_db_file(self):
-        with sqlite3.connect(self.name) as connection:
-            cursor = connection.cursor()
-            # Passwords have fantastic informational security
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS Users (
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                    Nickname TEXT UNIQUE NOT NULL,
-                    Password TEXT NOT NULL,
-                    Icon BLOB
-                );
-            ''')
-            cursor.execute('''
-                CREATE TABLE IF NOT EXISTS Requests (
-                    Date TEXT PRIMARY KEY,
-                    Name TEXT NOT NULL,
-                    Video BLOB NOT NULL,
-                    IsFake INTEGER NOT NULL,
-                    FakeCoefficient REAL NOT NULL,
-                    UserID INTEGER,
-                    Feedback TEXT,
-                    FOREIGN KEY (UserID) REFERENCES Users (ID) ON DELETE CASCADE
-                );
-            ''')
 
     # USERS
     def registration(self, nickname, password):
@@ -128,8 +131,3 @@ class DataBase:
             with sqlite3.connect(self.name) as connection:
                 cursor = connection.cursor()
                 cursor.execute("DELETE FROM Requests WHERE Date = ?", (date,))
-
-
-if __name__ == "__main__":
-    db = DataBase(name='DeepFakeDataBase.db')
-    db.create_new_db_file()
