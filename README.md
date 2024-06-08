@@ -51,11 +51,7 @@ source ./dr-venv/bin/activate
 ```
 pip install -r requirements.txt
 ```
-6. Запустить скрипт создания базы данных (при первом запуске).
-```
-python DataBase.py
-```
-7. Запустить приложение.
+6. Запустить приложение.
 ```
 python Main.py
 ```
@@ -65,3 +61,14 @@ python Main.py
 ## Дополнительно:
 
 В репозитории также есть директория с тестами первой модели /tests/. Вы можете использовать эти тесты для проверки работы первой модели.
+
+## Диаграммы бизнес-процессов системы распознавания:
+![444](https://github.com/veb-bet/Deepfake_recognition_method_in_video/assets/73333734/c4c46078-f08c-4626-a572-786a211e10a7)
+![333](https://github.com/veb-bet/Deepfake_recognition_method_in_video/assets/73333734/ae60e632-e9db-472d-bb09-51acac239efa)
+
+## Диаграмма классов:
+![1](https://github.com/veb-bet/Deepfake_recognition_method_in_video/assets/73333734/b0788a74-873f-45c4-9006-7c96b2f95b7c)
+
+## Струкрута базы данных:
+![2](https://github.com/veb-bet/Deepfake_recognition_method_in_video/assets/73333734/eede3e94-4528-42f4-afd9-c4af26764bd8)
+
