@@ -60,8 +60,7 @@ pip install setuptools
 ```
 pip install -r requirements.txt
 ```
-6. Скачать модель model.h5 и поместитить в папку app. (Ссылка для скачивания: https://drive.google.com/drive/folders/1lagnBnVeVbTPFwnU_r5FhUWtMns9kKKQ?usp=sharing)
-7. Запустить приложение.
+6. Запустить приложение.
 ```
 python Main.py
 ```
