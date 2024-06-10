@@ -26,8 +26,7 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install flake8 pytest
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install keras networkx numpy opencv-python PyQt5 PyQt5-Qt5 PyQt5-sip PyQt5-stubs qtwidgets requests scikit-learn scipy tensorboard tensorboard-data-server tensorflow tensorflow-estimator tensorflow-intel tensorflow-io-gcs-filesystem termcolor threadpoolctl torchy matplotlib
     - name: Run PyQt5 app
       run: |
         python Main.py
