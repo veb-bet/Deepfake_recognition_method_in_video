@@ -30,6 +30,7 @@ jobs:
         pip install keras networkx numpy opencv-python PyQt5 PyQt5-Qt5 PyQt5-sip PyQt5-stubs qtwidgets requests scikit-learn scipy tensorboard tensorboard-data-server tensorflow tensorflow-estimator tensorflow-intel tensorflow-io-gcs-filesystem termcolor threadpoolctl torchy matplotlib
         sudo apt-get update
         sudo apt-get install -y qtbase5-dev
+        sudo apt-get install libxkbcommon-x11-0 libxcb-xkb1 libxcb-xinput0
     - name: Run PyQt5 app
       run: |
         python Main.py
