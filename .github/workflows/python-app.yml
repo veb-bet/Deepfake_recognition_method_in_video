@@ -8,9 +8,10 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-permissions:
-  contents: read
+    
+defaults:
+  run:
+    working-directory: app
 
 jobs:
   build:
@@ -29,4 +30,4 @@ jobs:
         pip install keras networkx numpy opencv-python PyQt5 PyQt5-Qt5 PyQt5-sip PyQt5-stubs qtwidgets requests scikit-learn scipy tensorboard tensorboard-data-server tensorflow tensorflow-estimator tensorflow-intel tensorflow-io-gcs-filesystem termcolor threadpoolctl torchy matplotlib
     - name: Run PyQt5 app
       run: |
-        python app/Main.py
+        python Main.py
