@@ -28,6 +28,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install keras networkx numpy opencv-python PyQt5 PyQt5-Qt5 PyQt5-sip PyQt5-stubs qtwidgets requests scikit-learn scipy tensorboard tensorboard-data-server tensorflow tensorflow-estimator tensorflow-intel tensorflow-io-gcs-filesystem termcolor threadpoolctl torchy matplotlib
+        sudo apt-get update
+        sudo apt-get install -y qtbase5-dev
     - name: Run PyQt5 app
       run: |
         python Main.py
