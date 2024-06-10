@@ -30,11 +30,6 @@ jobs:
         pip install keras networkx numpy opencv-python PyQt5 PyQt5-Qt5 PyQt5-sip PyQt5-stubs qtwidgets requests scikit-learn scipy tensorboard tensorboard-data-server tensorflow tensorflow-estimator tensorflow-intel tensorflow-io-gcs-filesystem termcolor threadpoolctl torchy matplotlib
         sudo apt-get update
         sudo apt-get install -y qtbase5-dev
-    - name: Install Qt platform plugins
-      run: |
-        sudo apt-get install -y libqt5gui5 libqt5widgets5 libqt5core5a libqt5dbus5
-        sudo apt-get install -y libqt5gui5-dev libqt5widgets5-dev libqt5core5-dev libqt5dbus5-dev
-        sudo apt-get install -y libxcb1 libxcb1-dev
     - name: Run PyQt5 app
       run: |
         python Main.py
